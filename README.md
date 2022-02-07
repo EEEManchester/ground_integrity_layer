@@ -121,8 +121,8 @@ with ```ground_integrity:``` being the same name as in the previous plugins list
 There are more options which can passed to the costmap layer including:
 
 ```
-    observation_footprint: # List of vertices in format [[x0, y0], [x1, y1], [x2, y2], ..., [xN, yN]]
-    observation_radius: # radius in metres e.g. 0.5
+    detection_footprint: # List of vertices in format [[x0, y0], [x1, y1], [x2, y2], ..., [xN, yN]]
+    detection_radius: # radius in metres e.g. 0.5
     averaging_scale_length:  # distance in metres e.g. 0.2
     combination_method: # How are costmap costs integrated with other layers above, using integer values e.g. 1
     minimum_weight: # Total weight of cell before added to costmap (used with IDW)
