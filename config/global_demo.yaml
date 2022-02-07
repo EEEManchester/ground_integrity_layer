@@ -1,0 +1,25 @@
+# Costmap2D options - specifically for Ground Integrity only
+global_frame: map
+robot_base_frame: base_link
+update_frequency: 5.0 # (Hz) - How often is the costmap layer updated
+publish_frequency: 1.0 # (Hz) - How often is the costmap layer occupancy grid published (to be used by other nodes)
+transform_tolerance: 1.0 # (sec) - How long TF is willing to wait for an update
+
+rolling_window: false
+origin_x: -6.0
+origin_y: -6.0
+width: 12.0
+height: 12.0
+resolution: 0.05
+
+
+plugins:
+  - {name: ground_integrity, type: "ground_integrity::GILayer"} # Ground Integrity data
+
+ground_integrity:
+  observation_topic: fmcw/amplitude
+  # observation_footprint: []
+  detection_radius: 1.0
+  averaging_scale_length: 0.15 # (metres) - Variance mu of guassian kernel
+  combination_method: 0 # default = 0 - 0 = UpdateWithMax, 1 = UpdateWithOverwrite, 2 = UpdateWithAddition, 3 = updateWithMaxPreserveNoInfo
+  minimum_weight: 0.00 # default = 0.00 - only update costmap with cells with weight above value

@@ -1,0 +1,7 @@
+<class_libraries>
+  <library path="lib/libgi_layer">
+    <class type="ground_integrity::GILayer" base_class_type="costmap_2d::Layer">
+      <description>Interpolates Frequency Modulated Continuous Wave (FMCW) radar returns into the configuration of a mobile robot for risk management for uncertain ground integrity, such as water, voids etc</description>
+    </class>
+  </library>
+</class_libraries>

@@ -1,0 +1,28 @@
+<launch>
+    <arg name="ground_integrity_global_costmap_yaml" default="$(find ground_integrity_layer)/config/global_demo.yaml"/>
+    <arg name="radar_frame"  default="fmcw_antenna_link" />
+    <arg name="global_frame" default="map" />
+
+    <node name="global_costmap_ground_integrity" pkg="costmap_2d" type="costmap_2d_node" output="screen">
+      <rosparam file="$(arg ground_integrity_global_costmap_yaml)" command="load" ns="costmap"/>
+      <rosparam ns="costmap" param="robot_base_frame" subst_value="True">$(arg radar_frame)</rosparam>
+      <rosparam ns="costmap" param="map" subst_value="True">$(arg global_frame)</rosparam>
+      <rosparam ns="costmap/ground_integrity">
+        threshold_centre: 280
+        threshold_centre_scale: 3
+        threshold_variance: 50
+        threshold_variance_scale: 3
+      </rosparam>
+    </node>
+
+    <include file="$(find fmcw)/launch/fmcw.launch">
+      <param name="sensor_frame" value="$(arg radar_frame)" />
+    </include>
+
+    <node name="tfspoofer" pkg="ground_integrity_layer" type="spiral_tf.py" output="screen">
+      <param name="global_frame" value="$(arg global_frame)" />
+      <param name="child_frame"  value="$(arg radar_frame)"/>
+      <param name="speed"        value="0.2" />
+    </node>
+
+</launch>
