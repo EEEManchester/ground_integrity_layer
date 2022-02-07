@@ -18,7 +18,7 @@ plugins:
 
 ground_integrity:
   observation_topic: fmcw/amplitude
-  # observation_footprint: []
+  # detection_footprint: []
   detection_radius: 1.0
   averaging_scale_length: 0.15 # (metres) - Variance mu of guassian kernel
   combination_method: 0 # default = 0 - 0 = UpdateWithMax, 1 = UpdateWithOverwrite, 2 = UpdateWithAddition, 3 = updateWithMaxPreserveNoInfo
