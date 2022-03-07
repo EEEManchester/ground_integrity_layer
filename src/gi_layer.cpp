@@ -304,7 +304,7 @@ void GILayer::getCache(std::list<std::pair<std::pair<double,double>, std::pair<f
 unsigned int GILayer::scaledValue(float value)
 {
   // Pass value through super-gaussian function and invert (1->0 i.e. middle of the distribution is zero, wings tend to 1)
-  float super_gaussian = 1 - exp(-0.5 * pow(4.0, ((value - tc_) / tv_)));  // Power of 4 rather than 2 is what makes it a super-gaussian
+  float super_gaussian = 1 - exp(-0.5 * pow( ((value - tc_) / tv_), 4.0 ));  // Power of 4 rather than 2 is what makes it a super-gaussian
   int scaled_value = int((max_cost_* super_gaussian) - 0.5);  // The 0.5 effectively rounds down central values to ensure a good 0 cost coverage
   if (scaled_value > max_cost_) { // If cost value > LETHAL_OBSTACLE, then limit to LETHAL_OBSTACLE
     scaled_value = max_cost_;
