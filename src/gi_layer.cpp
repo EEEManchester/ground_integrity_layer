@@ -68,6 +68,9 @@ void GILayer::onInitialize()
   dynamic_reconfigure::Server<ground_integrity_layer::GroundIntegrityLayerConfig>::CallbackType cb = boost::bind(
       &GILayer::reconfigureCB, this, _1, _2);
   dsrv_->setCallback(cb);
+
+  // Publisher for raw averages data
+  raw_pub_ = nh.advertise<std_msgs::Float32MultiArray>(node_name_ + "/raw", 2);
 }
 
 
@@ -84,8 +87,8 @@ void GILayer::matchSize()
             master->getOriginX(), master->getOriginY());
 
   // Resize arrays for data averages and weight_obs per cell
-  unsigned int size_x = master->getSizeInCellsX();
-  unsigned int size_y = master->getSizeInCellsY();
+  size_x = master->getSizeInCellsX();
+  size_y = master->getSizeInCellsY();
   // Set up correct size for averages_
   if (averages_ == NULL) {
     //ROS_WARN("GILayer::updateCosts(): averages_ array is NULL");
@@ -355,6 +358,8 @@ void GILayer::updateBounds(double robot_x, double robot_y, double robot_yaw, dou
   *min_y = -std::numeric_limits<float>::max();
   *max_x = std::numeric_limits<float>::max();
   *max_y = std::numeric_limits<float>::max();
+  
+  publishRawData();
 }
 
 void GILayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
@@ -480,8 +485,6 @@ void GILayer::publishLayer(std::string layer_name){
           boost::shared_ptr<ground_integrity::GILayer> costmap;
           costmap = boost::static_pointer_cast<ground_integrity::GILayer>(plugin);
           unsigned char* grid = costmap->getCharMap();
-          int x_size = costmap->getSizeInCellsX();
-          int y_size = costmap->getSizeInCellsY();
           float res = costmap->getResolution();
           int size = x_size*y_size;
 
@@ -500,6 +503,32 @@ void GILayer::publishLayer(std::string layer_name){
           this->layer_pub_.publish(grid_msg);
       }
   }
+}
+
+
+void RadLayer::publishRawData()
+{
+  std_msgs::Float32MultiArray msg;
+
+  // Height
+  msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  msg.layout.dim[0].label = "height";
+  msg.layout.dim[0].size = size_x;
+  msg.layout.dim[0].stride = size_x * size_y;
+  // Width
+  msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  msg.layout.dim[1].label = "width";
+  msg.layout.dim[1].size = size_y;
+  msg.layout.dim[1].stride = size_y;
+
+  msg.layout.data_offset = 0;
+
+  std::vector<float> raw_vector(averages_, averages_ + (size_x * size_y));
+
+  msg.data.clear();
+  msg.data = raw_vector;
+
+  raw_pub_.publish(msg);
 }
 
 } // end namespace
