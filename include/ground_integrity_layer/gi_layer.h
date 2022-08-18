@@ -51,6 +51,7 @@ private:
   float* weight_obs_;
   unsigned int averages_size_;
 
+  std::string node_name_;
   bool update_full_layer_;
   bool rolling_window_;
   bool use_lethal_;

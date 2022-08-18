@@ -21,6 +21,7 @@ GILayer::GILayer() {}
 void GILayer::onInitialize()
 {
   ros::NodeHandle nh("~/" + name_), g_nh;
+  node_name_ = ros::this_node::getName() + "/" + name_; // Useful for logging to user console when many layers are running
   current_ = true;
   default_value_ = NO_INFORMATION;  // What should the layer be filled with by default
   rolling_window_ = layered_costmap_->isRolling();
@@ -486,13 +487,13 @@ void GILayer::publishLayer(std::string layer_name){
           costmap = boost::static_pointer_cast<ground_integrity::GILayer>(plugin);
           unsigned char* grid = costmap->getCharMap();
           float res = costmap->getResolution();
-          int size = x_size*y_size;
+          int size = size_x*size_y;
 
           nav_msgs::OccupancyGrid grid_msg;
           grid_msg.header.stamp = ros::Time::now();
           grid_msg.header.frame_id = "map";
-          grid_msg.info.width = x_size;
-          grid_msg.info.height = y_size;
+          grid_msg.info.width = size_x;
+          grid_msg.info.height = size_y;
           grid_msg.info.resolution = res;
           grid_msg.info.origin.position.x = costmap->getOriginX();
           grid_msg.info.origin.position.y = costmap->getOriginY();
@@ -506,7 +507,7 @@ void GILayer::publishLayer(std::string layer_name){
 }
 
 
-void RadLayer::publishRawData()
+void GILayer::publishRawData()
 {
   std_msgs::Float32MultiArray msg;
 
